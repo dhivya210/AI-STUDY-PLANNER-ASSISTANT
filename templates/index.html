@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Plan Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📚 AI Study Plan Assistant</h1>
+        
+        <form id="studyForm">
+            <label>📖 Enter your syllabus</label>
+            <input type="text" id="syllabus" placeholder="e.g., Mathematics, Physics, Programming">
+            
+            <label>📅 Enter your deadlines</label>
+            <input type="text" id="deadlines" placeholder="e.g., Exams on May 1, Project due April 15">
+            
+            <label>⏳ Available study time (hours/day)</label>
+            <input type="number" id="study_time" value="4">
+            
+            <label>💡 Additional input (Optional)</label>
+            <input type="text" id="user_input" placeholder="Any specific study preferences?">
+            
+            <button type="button" onclick="generatePlan()">Generate Study Plan</button>
+        </form>
+        
+        <div id="studyPlanOutput"></div>
+        
+        <h2>💬 AI Chatbot</h2>
+        <div id="chatContainer">
+            <input type="text" id="chatInput" placeholder="Ask me anything to help you in your studies" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="chatOutput"></div>
+    </div>
+
+    <script>
+        function generatePlan() {
+            let syllabus = document.getElementById("syllabus").value;
+            let deadlines = document.getElementById("deadlines").value;
+            let study_time = document.getElementById("study_time").value;
+            let user_input = document.getElementById("user_input").value;
+
+            fetch('/generate_plan', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ syllabus, deadlines, study_time, user_input })
+            })
+            .then(response => response.json())
+            .then(data => document.getElementById("studyPlanOutput").innerText = data.study_plan);
+        }
+
+        function sendMessage() {
+            let user_message = document.getElementById("chatInput").value;
+
+            fetch('/chatbot', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ message: user_message })
+            })
+            .then(response => response.json())
+            .then(data => document.getElementById("chatOutput").innerText = data.reply);
+        }
+    </script>
+</body>
+</html>
